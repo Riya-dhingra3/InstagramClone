@@ -1,45 +1,51 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Redirect, Tabs } from 'expo-router';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useAuth } from '@/providers/authProvider';
+export default function TabsLayout() {
+  const {isAuthenticated} = useAuth();
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+  if(!isAuthenticated){
+    return(
+      <Redirect href="/(auth)" />
+    )
+  }
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+    
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: 'black',
+          tabBarShowLabel: false,
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            headerTitle: 'For you',
+            tabBarIcon: ({ color }: { color: string }) => (
+              <FontAwesome name="home" size={26} color={color} />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="new"
+          options={{
+            headerTitle: 'Create post',
+            tabBarIcon: ({ color }: { color: string }) => (
+              <FontAwesome name="plus-square-o" size={26} color={color} />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="profile"
+          options={{
+            headerTitle: 'Profile',
+            tabBarIcon: ({ color }: { color: string }) => (
+              <FontAwesome name="user" size={26} color={color} />
+            ),
+          }}
+        />
+      </Tabs>
   );
 }
